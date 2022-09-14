@@ -1,5 +1,7 @@
 use std::str::FromStr;
 
+use crate::StaticType;
+
 /// A type in the cadence type system that needs to delegate serde implementation to a newtype wrapper.
 ///
 /// For example, integers are strings within the Cadence-JSON interchange format, so we need to use
@@ -61,11 +63,11 @@ wrapper!(U128(u128));
 #[derive(serde::Deserialize)]
 pub struct TypeDe {
     #[serde(rename = "staticType")]
-    pub static_type: String,
+    pub static_type: StaticType,
 }
 
 #[derive(serde::Serialize)]
 pub struct TypeSer<'a> {
     #[serde(rename = "staticType")]
-    pub static_type: &'a str,
+    pub static_type: &'a StaticType,
 }

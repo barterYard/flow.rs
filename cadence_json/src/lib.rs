@@ -62,6 +62,11 @@ pub struct PathOwned {
     pub domain: PathDomain,
     pub identifier: String,
 }
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq)]
+pub struct StaticType {
+    #[serde(rename = "typeID")]
+    pub type_id: String,
+}
 
 #[derive(Serialize, Clone, Debug, PartialEq, Eq)]
 pub struct CompositeFieldRef<'a> {
@@ -197,7 +202,7 @@ pub enum ValueRef<'a> {
     Contract(CompositeRef<'a>),
     Enum(CompositeRef<'a>),
     Path(PathRef<'a>),
-    Type(&'a str),
+    Type(StaticType),
     Capability(CapabilityRef<'a>),
 }
 
@@ -237,7 +242,7 @@ pub enum ValueOwned {
     Contract(CompositeOwned),
     Enum(CompositeOwned),
     Path(PathOwned),
-    Type(String),
+    Type(StaticType),
     Capability(CapabilityOwned),
 }
 

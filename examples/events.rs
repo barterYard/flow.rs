@@ -1,6 +1,8 @@
 use std::error::Error;
 
+use ::cadence_json::{CompositeOwned, ValueOwned};
 use flow_sdk::prelude::*;
+use serde_json::Value;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
@@ -16,7 +18,11 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     );
 
     for events in client
-        .events_for_height_range("flow.AccountCreated", start_height, latest_block_height)
+        .events_for_height_range(
+            "A.4eb8a10cb9f87357.NFTStorefront.ListingAvailable",
+            start_height,
+            latest_block_height,
+        )
         .await?
         .results
         .iter()
@@ -30,6 +36,9 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
             hex::encode(&events.block_id)
         );
         for event in events.events.iter() {
+            // let j = "";
+            // let r: ValueOwned = serde_json::from_str("{\"type\":\"Event\",\"value\":{\"fields\":[{\"name\":\"storefrontAddress\",\"value\":{\"type\":\"Address\",\"value\":\"0x559aa7e789e3f695\"}},{\"name\":\"listingResourceID\",\"value\":{\"type\":\"UInt64\",\"value\":\"566485303\"}},{\"name\":\"ftVaultType\",\"value\":{\"type\":\"Type\",\"value\":{\"staticType\":{\"fields\":[{\"id\":\"uuid\",\"type\":{\"kind\":\"UInt64\"}},{\"id\":\"balance\",\"type\":{\"kind\":\"UFix64\"}}],\"initializers\":[],\"kind\":\"Resource\",\"type\":\"\",\"typeID\":\"A.ead892083b3e2c6c.DapperUtilityCoin.Vault\"}}}},{\"name\":\"nftID\",\"value\":{\"type\":\"UInt64\",\"value\":\"283949\"}},{\"name\":\"price\",\"value\":{\"type\":\"UFix64\",\"value\":\"10.00000000\"}}],\"id\":\"A.4eb8a10cb9f87357.NFTStorefront.ListingAvailable\"}}").unwrap();
+            // println!("{:?}", r);
             let val = event.parse_payload()?;
 
             println!("  - {:#?}", val);
