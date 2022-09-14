@@ -108,9 +108,10 @@ pub struct EntryOwned {
     pub value: ValueOwned,
 }
 
-#[derive(DeserializeFromStr, SerializeDisplay, Clone, PartialEq, Eq)]
+#[derive(Deserialize, Serialize, Clone, PartialEq, Eq)]
 pub struct AddressOwned {
-    pub data: Box<[u8]>,
+    pub r#type: String,
+    pub value: Box<[u8]>,
 }
 
 impl FromStr for AddressOwned {
@@ -122,7 +123,8 @@ impl FromStr for AddressOwned {
             .ok_or(Cow::Borrowed("Address does not start with 0x"))?;
         hex::decode(s)
             .map(|data| AddressOwned {
-                data: data.into_boxed_slice(),
+                r#type: "Address".to_string(),
+                value: data.into_boxed_slice(),
             })
             .map_err(|e| match e {
                 FromHexError::OddLength => Cow::Borrowed("Odd number of digits"),
@@ -135,7 +137,7 @@ impl FromStr for AddressOwned {
 #[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(transparent)]
 pub struct AddressRef<'a> {
-    pub data: &'a [u8],
+    pub value: &'a [u8],
 }
 
 impl Serialize for AddressRef<'_> {

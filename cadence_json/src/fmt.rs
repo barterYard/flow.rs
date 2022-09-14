@@ -24,7 +24,7 @@ impl fmt::Debug for AddressOwned {
 
 impl fmt::Display for AddressOwned {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let hex = hex::encode(&self.data);
+        let hex = hex::encode(&self.value);
         assert_ne!(hex.len(), 0);
         f.write_str("0x")?;
         f.write_str(&hex)
@@ -39,7 +39,7 @@ impl fmt::Debug for AddressRef<'_> {
 
 impl fmt::Display for AddressRef<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let hex = hex::encode(self.data);
+        let hex = hex::encode(self.value);
         assert_ne!(hex.len(), 0);
         f.write_str("0x")?;
         f.write_str(&hex)
