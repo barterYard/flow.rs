@@ -44,7 +44,7 @@ impl fmt::Debug for Addrs<'_> {
                 self.0
                     .iter()
                     .map(Deref::deref)
-                    .map(|data| AddressRef { value: data }),
+                    .map(|data| AddressRef { data }),
             )
             .finish()
     }
@@ -87,7 +87,7 @@ impl fmt::Debug for ProposalKeyD {
             .field(
                 "address",
                 &AddressRef {
-                    value: &self.address,
+                    data: &self.address,
                 },
             )
             .field("key_id", &self.key_id)
@@ -102,7 +102,7 @@ impl fmt::Debug for SignatureD {
             .field(
                 "address",
                 &AddressRef {
-                    value: &self.address,
+                    data: &self.address,
                 },
             )
             .field("key_id", &self.key_id)
@@ -128,7 +128,7 @@ impl fmt::Debug for TransactionD {
             .field("reference_block_id", &Hex(&self.reference_block_id))
             .field("gas_limit", &self.gas_limit)
             .field("proposal_key", &self.proposal_key)
-            .field("payer", &AddressRef { value: &self.payer })
+            .field("payer", &AddressRef { data: &self.payer })
             .field("authorizers", &Addrs(&self.authorizers))
             .field("payload_signatures", &self.payload_signatures)
             .field("envelope_signatures", &self.envelope_signatures)
@@ -170,7 +170,7 @@ impl fmt::Debug for Account {
             .field(
                 "address",
                 &AddressRef {
-                    value: &self.address,
+                    data: &self.address,
                 },
             )
             .field("balance", &self.balance)
