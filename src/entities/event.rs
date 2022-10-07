@@ -5,7 +5,7 @@ use otopr::DecodableMessage;
 ///
 /// Events are either user-defined events originating from a Cadence smart contract,
 /// or built-in Flow system events.
-#[derive(DecodableMessage, Default)]
+#[derive(DecodableMessage, Default, Clone)]
 pub struct Event {
     /// Fully-qualified unique type identifier for the event
     pub ty: String,
