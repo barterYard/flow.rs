@@ -1,5 +1,9 @@
 //! The hashing and signing algorithms.
 
+use ::p256_flow::ecdsa::signature_flow::Signer;
+use ::p256_flow::elliptic_curve_flow::rand_core::OsRng;
+use ::p256_flow::elliptic_curve_flow::sec1::ToEncodedPoint;
+
 /// The default hasher, the exact type depends on the feature flags enabled.
 pub type DefaultHasher = DefaultHasherNoDoc;
 
@@ -78,7 +82,7 @@ pub trait FlowSigner {
     fn new() -> Self;
 
     /// Creates a signature by consuming a populated hasher and a secret key.
-    fn sign(&self, hasher: impl FlowHasher, secret_key: &Self::SecretKey) -> Self::Signature {
+    fn f_sign(&self, hasher: impl FlowHasher, secret_key: &Self::SecretKey) -> Self::Signature {
         self.sign_populated(hasher.finalize(), secret_key)
     }
 
@@ -98,6 +102,11 @@ pub trait SecretKey {
     type Signer: FlowSigner<SecretKey = Self>;
 }
 
+#[cfg(feature = "secp256k1-sign")]
+/// Re-exports items from the `p256_flow` crate.
+pub mod p256_flow {
+    pub use p256_flow::*;
+}
 #[cfg(feature = "secp256k1-sign")]
 /// Re-exports items from the `secp256k1` crate.
 pub mod secp256k1 {
@@ -145,6 +154,52 @@ impl Signature for secp256k1::Signature {
     }
 }
 
+impl Signature for p256_flow::ecdsa::Signature {
+    type Serialized = [u8; 64];
+
+    fn serialize(&self) -> Self::Serialized {
+        self.to_der().as_bytes().to_owned().try_into().unwrap()
+    }
+}
+// t signing_key = SigningKey::random(&mut OsRng); // Serialize with `::to_bytes()`
+// let message = b"ECDSA proves knowledge of a secret number in the context of a single message";
+// let signature: Signature = signing_key.sign(message);
+
+// // Verification
+// use p256::ecdsa::{VerifyingKey, signature::Verifier};
+
+// let verifying_key = VerifyingKey::from(&signing_key); // Serialize with `::to_encoded_point()`
+// assert!(verifying_key.verify(message, &signature).is_ok());
+impl FlowSigner for p256_flow::ecdsa::SigningKey {
+    type Algorithm = P256;
+
+    type SecretKey = p256_flow::SecretKey;
+
+    type PublicKey = p256_flow::PublicKey;
+
+    type Signature = p256_flow::ecdsa::Signature;
+
+    fn new() -> Self {
+        Self::random(&mut OsRng)
+    }
+
+    fn sign_populated(&self, hashed: [u8; 32], _secret_key: &Self::SecretKey) -> Self::Signature {
+        self.sign(&hashed)
+    }
+
+    fn to_public_key(&self, secret_key: &Self::SecretKey) -> Self::PublicKey {
+        secret_key.public_key()
+    }
+
+    fn serialize_public_key(&self, public_key: &Self::PublicKey) -> [u8; 64] {
+        public_key
+            .to_encoded_point(false)
+            .as_bytes()
+            .to_owned()
+            .try_into()
+            .unwrap()
+    }
+}
 #[cfg(feature = "secp256k1-sign")]
 impl FlowSigner for secp256k1::Secp256k1<secp256k1::SignOnly> {
     type Algorithm = Secp256k1;
@@ -182,6 +237,10 @@ impl FlowSigner for secp256k1::Secp256k1<secp256k1::SignOnly> {
 #[cfg(feature = "secp256k1-sign")]
 impl SecretKey for secp256k1::SecretKey {
     type Signer = secp256k1::Secp256k1<secp256k1::SignOnly>;
+}
+
+impl SecretKey for p256_flow::SecretKey {
+    type Signer = p256_flow::ecdsa::SigningKey;
 }
 
 #[cfg(feature = "sha3-hash")]
