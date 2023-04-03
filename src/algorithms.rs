@@ -102,15 +102,16 @@ pub trait SecretKey {
     type Signer: FlowSigner<SecretKey = Self>;
 }
 
+/// Re-exports items from the `p256_flow` crate.
+pub mod p256_flow {
+    pub use p256_flow::*;
+}
 #[cfg(feature = "secp256k1-sign")]
 /// Re-exports items from the `secp256k1` crate.
 pub mod secp256k1 {
     pub use secp256k1::*;
 }
-/// Re-exports items from the `p256_flow` crate.
-pub mod p256_flow {
-    pub use p256_flow::*;
-}
+
 #[cfg(feature = "sha3-hash")]
 /// Re-exports items from the `tiny_keccak` crate.
 pub mod sha3 {
