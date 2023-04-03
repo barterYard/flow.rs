@@ -109,7 +109,9 @@ pub trait SecretKey {
 pub mod secp256k1 {
     pub use secp256k1::*;
 }
-
+pub mod p256 {
+    pub use p256_flow::*;
+}
 #[cfg(feature = "sha3-hash")]
 /// Re-exports items from the `tiny_keccak` crate.
 pub mod sha3 {
