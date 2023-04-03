@@ -109,6 +109,7 @@ pub trait SecretKey {
 pub mod secp256k1 {
     pub use secp256k1::*;
 }
+/// Re-exports items from the `p256` crate.
 pub mod p256 {
     pub use p256_flow::*;
 }
