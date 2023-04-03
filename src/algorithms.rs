@@ -109,8 +109,8 @@ pub trait SecretKey {
 pub mod secp256k1 {
     pub use secp256k1::*;
 }
-/// Re-exports items from the `p256` crate.
-pub mod p256 {
+/// Re-exports items from the `p256_flow` crate.
+pub mod p256_flow {
     pub use p256_flow::*;
 }
 #[cfg(feature = "sha3-hash")]
