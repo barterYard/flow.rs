@@ -21,12 +21,4 @@ pub struct CollectionGuarantee {
 
     /// BLS signatures of the collection nodes guaranteeing the collection
     pub signatures: Repeated<Vec<Box<[u8]>>>,
-
-    ///
-    pub reference_block_id: Box<[u8]>,
-
-    ///
-    pub signature: Box<[u8]>,
-    ///
-    pub signer_indices: Box<[u8]>,
 }

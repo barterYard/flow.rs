@@ -138,7 +138,7 @@ parse_tests! {
         "value": {
           "staticType": "Int"
         }
-    } <==> ValueOwned::Type(StaticType { type_id: "Int".to_string() })
+    } <==> ValueOwned::Type("Int".into())
 
     fn capability() {
         "type": "Capability",

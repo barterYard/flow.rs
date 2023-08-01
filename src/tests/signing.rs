@@ -1,10 +1,10 @@
 use std::error::Error;
 
-use crate::prelude::*;
-use crate::{access::SendTransactionRequest, algorithms::FlowSigner};
 use ::cadence_json::AddressOwned;
-use p256_flow;
-use secp256k1::{self, Secp256k1};
+use secp256k1::{PublicKey, Secp256k1, SecretKey};
+
+use crate::access::SendTransactionRequest;
+use crate::prelude::*;
 
 const ONEKEY_1_ADDRESS: &str = "0x41c60c9bacab2a3d";
 const ONEKEY_1_SK: &str = "74cd94fc21e264811c97bb87f1061edc93aaeedb6885ff8307608a9f2bcebec5";
@@ -26,8 +26,8 @@ async fn signing_transactions_one_one() -> Result<(), Box<dyn Error + Send + Syn
 
     let secp256k1 = Secp256k1::signing_only();
     let secret_key_raw = hex::decode(ONEKEY_1_SK).unwrap();
-    let secret_key = secp256k1::SecretKey::from_slice(&secret_key_raw).unwrap();
-    let public_key = secp256k1::PublicKey::from_secret_key(&secp256k1, &secret_key);
+    let secret_key = SecretKey::from_slice(&secret_key_raw).unwrap();
+    let public_key = PublicKey::from_secret_key(&secp256k1, &secret_key);
 
     let txn = CreateAccountTransaction {
         public_keys: &[public_key],
@@ -47,49 +47,16 @@ async fn signing_transactions_one_one() -> Result<(), Box<dyn Error + Send + Syn
 }
 
 #[tokio::test]
-async fn signing_transactions_one_one_p256() -> Result<(), Box<dyn Error + Send + Sync>> {
-    let client = TonicHyperFlowClient::testnet().await?;
-
-    let p256 = p256_flow::ecdsa::SigningKey::new();
-    let secret_key_raw = hex::decode(ONEKEY_1_SK).unwrap();
-
-    let secret_key = p256_flow::SecretKey::from_be_bytes(&secret_key_raw).unwrap();
-    let public_key = secret_key.public_key();
-
-    let txn = CreateAccountTransaction {
-        public_keys: &[public_key],
-    };
-    let txn = txn.to_header::<_, DefaultHasher>(&p256);
-
-    let address: AddressOwned = ONEKEY_1_ADDRESS.parse().unwrap();
-
-    let mut account =
-        Account::<_, p256_flow::SecretKey, p256_flow::ecdsa::SigningKey, DefaultHasher>::new(
-            client,
-            &address.data,
-            secret_key,
-        )
-        .await?;
-
-    let latest_block = account.client().latest_block_header(Seal::Sealed).await?.id;
-    let sequence_number = account.primary_key_sequence_number().await?;
-
-    account.sign_transaction_header(&txn, latest_block, sequence_number as u64, 1000);
-
-    Ok(())
-}
-
-#[tokio::test]
 async fn signing_transactions_multisig_one() -> Result<(), Box<dyn Error + Send + Sync>> {
     let client = TonicHyperFlowClient::testnet().await?;
 
     let secp256k1 = Secp256k1::signing_only();
     let sk1 = hex::decode(MULTISIG_1_SK_1).unwrap();
     let sk2 = hex::decode(MULTISIG_1_SK_2).unwrap();
-    let sk1 = secp256k1::SecretKey::from_slice(&sk1).unwrap();
-    let sk2 = secp256k1::SecretKey::from_slice(&sk2).unwrap();
+    let sk1 = SecretKey::from_slice(&sk1).unwrap();
+    let sk2 = SecretKey::from_slice(&sk2).unwrap();
 
-    let pk1 = secp256k1::PublicKey::from_secret_key(&secp256k1, &sk1);
+    let pk1 = PublicKey::from_secret_key(&secp256k1, &sk1);
 
     let txn = CreateAccountTransaction {
         public_keys: &[pk1],
@@ -115,10 +82,10 @@ async fn signing_transactions_one_multi() -> Result<(), Box<dyn Error + Send + S
 
     let secp256k1 = Secp256k1::signing_only();
     let sk1 = hex::decode(ONEKEY_1_SK).unwrap();
-    let sk1 = secp256k1::SecretKey::from_slice(&sk1).unwrap();
+    let sk1 = SecretKey::from_slice(&sk1).unwrap();
     let sk2 = hex::decode(ONEKEY_2_SK).unwrap();
-    let sk2 = secp256k1::SecretKey::from_slice(&sk2).unwrap();
-    let pk = secp256k1::PublicKey::from_secret_key(&secp256k1, &sk1);
+    let sk2 = SecretKey::from_slice(&sk2).unwrap();
+    let pk = PublicKey::from_secret_key(&secp256k1, &sk1);
     let address1: AddressOwned = ONEKEY_1_ADDRESS.parse().unwrap();
     let address2: AddressOwned = ONEKEY_2_ADDRESS.parse().unwrap();
 
@@ -163,9 +130,9 @@ async fn signing_transactions_one_multi_authorizers() -> Result<(), Box<dyn Erro
     let client2 = client.clone();
 
     let sk1 = hex::decode(ONEKEY_1_SK).unwrap();
-    let sk1 = secp256k1::SecretKey::from_slice(&sk1).unwrap();
+    let sk1 = SecretKey::from_slice(&sk1).unwrap();
     let sk2 = hex::decode(ONEKEY_2_SK).unwrap();
-    let sk2 = secp256k1::SecretKey::from_slice(&sk2).unwrap();
+    let sk2 = SecretKey::from_slice(&sk2).unwrap();
     let address1: AddressOwned = ONEKEY_1_ADDRESS.parse().unwrap();
     let address2: AddressOwned = ONEKEY_2_ADDRESS.parse().unwrap();
 
@@ -206,14 +173,14 @@ async fn signing_transactions_multisig_multi() -> Result<(), Box<dyn Error + Sen
 
     let secp = Secp256k1::signing_only();
     let sk1_1 = hex::decode(MULTISIG_1_SK_1).unwrap();
-    let sk1_1 = secp256k1::SecretKey::from_slice(&sk1_1).unwrap();
+    let sk1_1 = SecretKey::from_slice(&sk1_1).unwrap();
     let sk1_2 = hex::decode(MULTISIG_1_SK_2).unwrap();
-    let sk1_2 = secp256k1::SecretKey::from_slice(&sk1_2).unwrap();
+    let sk1_2 = SecretKey::from_slice(&sk1_2).unwrap();
     let sk2_1 = hex::decode(MULTISIG_2_SK_1).unwrap();
-    let sk2_1 = secp256k1::SecretKey::from_slice(&sk2_1).unwrap();
+    let sk2_1 = SecretKey::from_slice(&sk2_1).unwrap();
     let sk2_2 = hex::decode(MULTISIG_2_SK_2).unwrap();
-    let sk2_2 = secp256k1::SecretKey::from_slice(&sk2_2).unwrap();
-    let pk = secp256k1::PublicKey::from_secret_key(&secp, &sk1_1);
+    let sk2_2 = SecretKey::from_slice(&sk2_2).unwrap();
+    let pk = PublicKey::from_secret_key(&secp, &sk1_1);
     let address1: AddressOwned = MULTISIG_1_ADDRESS.parse().unwrap();
     let address2: AddressOwned = MULTISIG_2_ADDRESS.parse().unwrap();
 
@@ -260,10 +227,10 @@ async fn _create_accounts() -> Result<(), Box<dyn Error + Send + Sync>> {
     let my_secret_key = SecretKey::from_slice(&hex::decode(ONEKEY_1_SK).unwrap()).unwrap();
     let sk1 = hex::decode(MULTISIG_2_SK_1).unwrap();
     let sk2 = hex::decode(MULTISIG_2_SK_2).unwrap();
-    let sk1 = secp256k1::SecretKey::from_slice(&sk1).unwrap();
-    let sk2 = secp256k1::SecretKey::from_slice(&sk2).unwrap();
-    let pk1 = secp256k1::PublicKey::from_secret_key(&secp256k1, &sk1);
-    let pk2 = secp256k1::PublicKey::from_secret_key(&secp256k1, &sk2);
+    let sk1 = SecretKey::from_slice(&sk1).unwrap();
+    let sk2 = SecretKey::from_slice(&sk2).unwrap();
+    let pk1 = PublicKey::from_secret_key(&secp256k1, &sk1);
+    let pk2 = PublicKey::from_secret_key(&secp256k1, &sk2);
 
     let txn = CreateAccountWeightedTransaction {
         public_keys: &[(pk1, "500".parse().unwrap()), (pk2, "500".parse().unwrap())],
