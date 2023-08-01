@@ -183,12 +183,12 @@ impl FlowSigner for p256_flow::ecdsa::SigningKey {
         Self::random(&mut OsRng)
     }
 
-    fn sign_populated(&self, hashed: [u8; 32], secret_key: &Self::SecretKey) -> Self::Signature {
+    fn sign_populated(&self, hashed: [u8; 32], _secret_key: &Self::SecretKey) -> Self::Signature {
         self.sign(&hashed)
     }
 
     fn to_public_key(&self, secret_key: &Self::SecretKey) -> Self::PublicKey {
-        p256_flow::PublicKey::from_sec1_bytes(&self.to_bytes()).unwrap()
+        secret_key.public_key()
     }
 
     fn serialize_public_key(&self, public_key: &Self::PublicKey) -> [u8; 64] {
