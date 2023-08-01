@@ -11,6 +11,9 @@ pub struct ExecutionResult {
     pub chunks: Repeated<Vec<Chunk>>,
     /// Service events that occured within this execution.
     pub service_events: Repeated<Vec<ServiceEvent>>,
+
+    /// execution_data_id
+    pub execution_data_id: Box<[u8]>,
 }
 
 /// Chunk describes execution information for given collection in a block.
@@ -30,6 +33,12 @@ pub struct Chunk {
     pub index: u64,
     /// State commitment after executing chunk
     pub end_state: Box<[u8]>,
+
+    ///
+    pub execution_data_id: Box<[u8]>,
+
+    ///
+    pub state_delta_commitment: Box<[u8]>,
 }
 
 /// Special type of events emitted in system chunk used for controlling Flow system.
