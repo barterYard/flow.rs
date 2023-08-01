@@ -4,7 +4,7 @@ use crate::prelude::*;
 use crate::{access::SendTransactionRequest, algorithms::FlowSigner};
 use ::cadence_json::AddressOwned;
 use p256_flow;
-use secp256k1::{self, Secp256k1};
+use secp256k1::{self, Secp256k1, SecretKey};
 
 const ONEKEY_1_ADDRESS: &str = "0x41c60c9bacab2a3d";
 const ONEKEY_1_SK: &str = "74cd94fc21e264811c97bb87f1061edc93aaeedb6885ff8307608a9f2bcebec5";

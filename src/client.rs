@@ -389,7 +389,7 @@ impl TonicHyperFlowClient {
         endpoint: tonic::transport::Endpoint,
     ) -> Result<Self, tonic::transport::Error> {
         Ok(Self {
-            inner: Grpc::new(endpoint.connect_lazy()?),
+            inner: Grpc::new(endpoint.connect_lazy()),
         })
     }
 

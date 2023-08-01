@@ -9,7 +9,7 @@ repository = "https://github.com/fee1-dead/flow.rs"
 [dependencies]
 otopr = "0.4.0" # protobuf library
 # prost-types = "0.8.0" # protobuf well-known types for prost
-tonic = { version = "0.5.2", default_features = false }                   # gRPC library
+tonic = { version = "0.9.2", default-features = false }                   # gRPC library
 http = "0.2.9"
 http-body = "0.4.5"
 rlp = "0.5.2"
@@ -23,16 +23,16 @@ futures-timer = "3.0.2"
 futures-util = "0.3.28"
 tiny-keccak = { version = "2.0.2", features = ["sha3"], optional = true }
 # sha2 = { version = "0.9.8", optional = true }
-secp256k1 = { version = "0.20.3", optional = true }
-rand = { version = "0.6.5", optional = true }
+secp256k1 = { version = "0.27", optional = true }
+rand = { version = "0.8.5", optional = true }
 p256_flow = { version = "1.0.0", features = ["pkcs8"] }
 
 [dev-dependencies]
-tokio = { version = "1", features = ["full"] }          # async runtime for examples
-chrono = "0.4.26"                                       # Date and time library
+tokio = { version = "1", features = ["full"] }        # async runtime for examples
+chrono = "0.4.26"                                     # Date and time library
 hex = "0.4.3"
-rand = "0.6.5"
-secp256k1 = { version = "0.20.3", features = ["rand"] }
+rand = "0.8.5"
+secp256k1 = { version = "0.27", features = ["rand"] }
 skeptic = "0.13"
 
 [build-dependencies]

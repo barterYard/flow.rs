@@ -4,6 +4,8 @@ use ::p256_flow::ecdsa::signature_flow::Signer;
 use ::p256_flow::elliptic_curve_flow::rand_core::OsRng;
 use ::p256_flow::elliptic_curve_flow::sec1::ToEncodedPoint;
 
+use crate::algorithms::secp256k1::ThirtyTwoByteHash;
+
 /// The default hasher, the exact type depends on the feature flags enabled.
 pub type DefaultHasher = DefaultHasherNoDoc;
 
@@ -146,7 +148,7 @@ impl FlowHasher for tiny_keccak::Sha3 {
 }
 
 #[cfg(feature = "secp256k1-sign")]
-impl Signature for secp256k1::Signature {
+impl Signature for secp256k1::ecdsa::Signature {
     type Serialized = [u8; 64];
 
     fn serialize(&self) -> Self::Serialized {
@@ -208,7 +210,7 @@ impl FlowSigner for secp256k1::Secp256k1<secp256k1::SignOnly> {
 
     type SecretKey = secp256k1::SecretKey;
 
-    type Signature = secp256k1::Signature;
+    type Signature = secp256k1::ecdsa::Signature;
 
     fn new() -> Self {
         Self::signing_only()
@@ -216,12 +218,12 @@ impl FlowSigner for secp256k1::Secp256k1<secp256k1::SignOnly> {
 
     fn sign_populated(&self, hashed: [u8; 32], secret_key: &Self::SecretKey) -> Self::Signature {
         struct Ttbh([u8; 32]);
-        impl secp256k1::ThirtyTwoByteHash for Ttbh {
+        impl ThirtyTwoByteHash for Ttbh {
             fn into_32(self) -> [u8; 32] {
                 self.0
             }
         }
-        self.sign(&secp256k1::Message::from(Ttbh(hashed)), secret_key)
+        self.sign_ecdsa(&secp256k1::Message::from(Ttbh(hashed)), secret_key)
     }
 
     fn to_public_key(&self, secret_key: &Self::SecretKey) -> Self::PublicKey {
