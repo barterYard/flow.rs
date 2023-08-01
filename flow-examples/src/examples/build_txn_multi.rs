@@ -41,7 +41,7 @@ async fn run(service: &mut ExampleAccount, args: &mut SplitWhitespace<'_>) -> Re
         .with_context(|| "Parsing arguments file as Cadence JSON")?
         .unwrap_or_default();
 
-    let mut rng = rand::rngs::EntropyRng::new();
+    let mut rng = rand::thread_rng();
     let secp = Secp256k1::signing_only();
 
     macro_rules! to_pk {

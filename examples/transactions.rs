@@ -17,7 +17,7 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     let secp = Secp256k1::signing_only();
 
     // `EntropyRng` is a secure random number generator.
-    let mut rng = secp256k1::rand::rngs::EntropyRng::new();
+    let mut rng = secp256k1::rand::thread_rng();
     let secret_key = SecretKey::new(&mut rng);
     let public_key = PublicKey::from_secret_key(&secp, &secret_key);
 

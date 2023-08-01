@@ -4,8 +4,6 @@ use ::p256_flow::ecdsa::signature_flow::Signer;
 use ::p256_flow::elliptic_curve_flow::rand_core::OsRng;
 use ::p256_flow::elliptic_curve_flow::sec1::ToEncodedPoint;
 
-use crate::algorithms::secp256k1::ThirtyTwoByteHash;
-
 /// The default hasher, the exact type depends on the feature flags enabled.
 pub type DefaultHasher = DefaultHasherNoDoc;
 
@@ -218,7 +216,7 @@ impl FlowSigner for secp256k1::Secp256k1<secp256k1::SignOnly> {
 
     fn sign_populated(&self, hashed: [u8; 32], secret_key: &Self::SecretKey) -> Self::Signature {
         struct Ttbh([u8; 32]);
-        impl ThirtyTwoByteHash for Ttbh {
+        impl ::secp256k1::ThirtyTwoByteHash for Ttbh {
             fn into_32(self) -> [u8; 32] {
                 self.0
             }

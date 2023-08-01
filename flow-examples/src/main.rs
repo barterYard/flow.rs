@@ -10,6 +10,7 @@ use std::time::Duration;
 use flow_sdk::algorithms::{self as algo, HashAlgorithm, SignatureAlgorithm};
 use flow_sdk::prelude::*;
 use rustyline::error::ReadlineError;
+use rustyline::history::FileHistory;
 
 mod examples;
 
@@ -127,7 +128,7 @@ async fn main_inner(
     println!("Successfully logged in to the service account!");
     println!("type \"help\" for help");
 
-    let mut rl = rustyline::Editor::<()>::new();
+    let mut rl = rustyline::Editor::<(), FileHistory>::new().ok().unwrap();
 
     loop {
         match rl.readline(">> ") {
