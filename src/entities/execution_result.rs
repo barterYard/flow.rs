@@ -1,7 +1,7 @@
 use otopr::*;
 
 /// Execution result for a particular block.
-#[derive(DecodableMessage, Default)]
+#[derive(DecodableMessage, Default, Eq, PartialEq, Debug)]
 pub struct ExecutionResult {
     /// Identifier of parent block execution result.
     pub previous_result_id: Box<[u8]>,
@@ -9,6 +9,7 @@ pub struct ExecutionResult {
     pub block_id: Box<[u8]>,
     /// Chunks within this execution.
     pub chunks: Repeated<Vec<Chunk>>,
+
     /// Service events that occured within this execution.
     pub service_events: Repeated<Vec<ServiceEvent>>,
 
@@ -17,7 +18,7 @@ pub struct ExecutionResult {
 }
 
 /// Chunk describes execution information for given collection in a block.
-#[derive(DecodableMessage, Default)]
+#[derive(DecodableMessage, Default, PartialEq, Eq, Debug)]
 pub struct Chunk {
     /// State commitment at start of the chunk.
     pub start_state: Box<[u8]>,
@@ -42,7 +43,7 @@ pub struct Chunk {
 }
 
 /// Special type of events emitted in system chunk used for controlling Flow system.
-#[derive(DecodableMessage, Default)]
+#[derive(DecodableMessage, Default, Eq, PartialEq, Debug)]
 pub struct ServiceEvent {
     /// Type of an event
     pub ty: String,

@@ -606,7 +606,7 @@ where
             address,
             signer,
             method,
-            &header.script.as_ref(),
+            header.script.as_ref(),
             &header.arguments,
             reference_block_id,
             sequence_number,

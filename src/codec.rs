@@ -84,10 +84,10 @@ impl<T: for<'de> DecodableMessage<'de> + Default> Decoder for PDec<T> {
                     Status::invalid_argument("scalar overflow")
                 }
                 otopr::decoding::DecodingError::Utf8Error(e) => {
-                    Status::invalid_argument(&format!("{}", e))
+                    Status::invalid_argument(format!("{}", e))
                 }
                 otopr::decoding::DecodingError::UnknownWireType(u) => {
-                    Status::invalid_argument(&format!("unknown wire type: {}", u))
+                    Status::invalid_argument(format!("unknown wire type: {}", u))
                 }
             }),
         }

@@ -2,7 +2,6 @@ use std::error::Error;
 
 use ::cadence_json::{CompositeOwned, ValueOwned};
 use flow_sdk::prelude::*;
-use serde_json::Value;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {

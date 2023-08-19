@@ -9,9 +9,9 @@ use crate::ExampleAccount;
 macro_rules! example {
     ($run_ident: ident) => {
         pub fn __run<'a>(
-            account: &'a mut crate::ExampleAccount,
+            account: &'a mut $crate::ExampleAccount,
             args: &'a mut std::str::SplitWhitespace<'_>,
-        ) -> crate::examples::ExampleReturnTy<'a> {
+        ) -> $crate::examples::ExampleReturnTy<'a> {
             Box::pin(async move { $run_ident(account, args).await })
         }
     };

@@ -11,7 +11,7 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     let latest_block_header = net.latest_block_header(Seal::Sealed).await?;
     println!("{:?}", latest_block_header);
     let Timestamp { nanos, seconds } = latest_block_header.timestamp;
-    println!("{}", Utc.timestamp(seconds, nanos as u32));
+    println!("{}", Utc.timestamp_opt(seconds, nanos as u32).unwrap());
 
     println!("----------------");
 
@@ -20,7 +20,7 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
         .await?;
     println!("{:?}", block_header2);
     let Timestamp { nanos, seconds } = block_header2.timestamp;
-    println!("{}", Utc.timestamp(seconds, nanos as u32));
+    println!("{}", Utc.timestamp_opt(seconds, nanos as u32).unwrap());
 
     assert_eq!(latest_block_header, block_header2);
 

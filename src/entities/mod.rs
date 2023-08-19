@@ -81,4 +81,10 @@ pub struct Block {
 
     /// BLS signatures of consensus nodes
     pub signatures: Repeated<Vec<Box<[u8]>>>,
+
+    /// @@protoc_insertion_point(field:flow.entities.Block.execution_result_list)
+    pub execution_result_list: Repeated<Vec<ExecutionResult>>,
+
+    /// @@protoc_insertion_point(field:flow.entities.Block.block_header)
+    pub block_header: BlockHeader,
 }
