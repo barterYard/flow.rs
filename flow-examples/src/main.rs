@@ -166,7 +166,7 @@ async fn main_inner(
                     Some(_) => show_help(),
                     None => {}
                 }
-                let _ = rl.add_history_entry(line);
+                rl.add_history_entry(line);
             }
             Err(ReadlineError::Eof) => {
                 println!("Ctrl-D");

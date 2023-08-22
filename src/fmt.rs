@@ -60,8 +60,6 @@ impl fmt::Debug for Block {
             .field("collection_guarantees", &self.collection_guarantees)
             .field("block_seals", &self.block_seals)
             .field("signatures", &Hexes(&*self.signatures))
-            .field("execution_result_list", &self.execution_result_list)
-            .field("block_header", &self.block_header)
             .finish()
     }
 }

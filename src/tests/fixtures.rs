@@ -68,9 +68,9 @@ pub fn parse_test_fixture<T: Test + UnwindSafe>(input: &str) -> TestFixture<T> {
 macro_rules! test_fixtures {
     ($TestTy:ty, $file_name:literal, $fn_name: ident) => {
         #[test]
-        fn $fn_name() -> Result<(), $crate::tests::fixtures::TestFixtureResult> {
+        fn $fn_name() -> Result<(), crate::tests::fixtures::TestFixtureResult> {
             let fixture =
-                $crate::tests::fixtures::parse_test_fixture::<$TestTy>(include_str!($file_name));
+                crate::tests::fixtures::parse_test_fixture::<$TestTy>(include_str!($file_name));
             fixture.run()
         }
     };
