@@ -97,60 +97,104 @@ impl<'de> Visitor<'de> for CadenceObjectVisitor {
 
         Ok(match ty {
             Void => ValueOwned::Void,
-            Optional => ValueOwned::Optional(serde_json::from_value(val).unwrap()),
-            Bool => ValueOwned::Bool(serde_json::from_value(val).unwrap()),
-            String => ValueOwned::String(serde_json::from_value(val).unwrap()),
-            Address => ValueOwned::Address(serde_json::from_value(val).unwrap()),
-            UInt => ValueOwned::UInt(serde_json::from_value::<BigUint>(val).unwrap().0),
-            UInt8 => ValueOwned::UInt8(serde_json::from_value::<U8>(val).unwrap().0),
-            UInt16 => ValueOwned::UInt16(serde_json::from_value::<U16>(val).unwrap().0),
-            UInt32 => ValueOwned::UInt32(serde_json::from_value::<U32>(val).unwrap().0),
-            UInt64 => ValueOwned::UInt64(serde_json::from_value::<U64>(val).unwrap().0),
-            UInt128 => ValueOwned::UInt128(serde_json::from_value::<U128>(val).unwrap().0),
-            UInt256 => ValueOwned::UInt256(serde_json::from_value::<BigUint>(val).unwrap().0),
-            Int => ValueOwned::Int(serde_json::from_value::<BigInt>(val).unwrap().0),
-            Int8 => ValueOwned::Int8(serde_json::from_value::<I8>(val).unwrap().0),
-            Int16 => ValueOwned::Int16(serde_json::from_value::<I16>(val).unwrap().0),
-            Int32 => ValueOwned::Int32(serde_json::from_value::<I32>(val).unwrap().0),
-            Int64 => ValueOwned::Int64(serde_json::from_value::<I64>(val).unwrap().0),
-            Int128 => ValueOwned::Int128(serde_json::from_value::<I128>(val).unwrap().0),
-            Int256 => ValueOwned::Int256(serde_json::from_value::<BigInt>(val).unwrap().0),
+            Optional => ValueOwned::Optional(serde_json::from_value(val).expect("error parsing")),
+            Bool => ValueOwned::Bool(serde_json::from_value(val).expect("error parsing")),
+            String => ValueOwned::String(serde_json::from_value(val).expect("error parsing")),
+            Address => ValueOwned::Address(serde_json::from_value(val).expect("error parsing")),
+            UInt => ValueOwned::UInt(
+                serde_json::from_value::<BigUint>(val)
+                    .expect("error parsing")
+                    .0,
+            ),
+            UInt8 => ValueOwned::UInt8(serde_json::from_value::<U8>(val).expect("error parsing").0),
+            UInt16 => {
+                ValueOwned::UInt16(serde_json::from_value::<U16>(val).expect("error parsing").0)
+            }
+            UInt32 => {
+                ValueOwned::UInt32(serde_json::from_value::<U32>(val).expect("error parsing").0)
+            }
+            UInt64 => {
+                ValueOwned::UInt64(serde_json::from_value::<U64>(val).expect("error parsing").0)
+            }
+            UInt128 => ValueOwned::UInt128(
+                serde_json::from_value::<U128>(val)
+                    .expect("error parsing")
+                    .0,
+            ),
+            UInt256 => ValueOwned::UInt256(
+                serde_json::from_value::<BigUint>(val)
+                    .expect("error parsing")
+                    .0,
+            ),
+            Int => ValueOwned::Int(
+                serde_json::from_value::<BigInt>(val)
+                    .expect("error parsing")
+                    .0,
+            ),
+            Int8 => ValueOwned::Int8(serde_json::from_value::<I8>(val).expect("error parsing").0),
+            Int16 => {
+                ValueOwned::Int16(serde_json::from_value::<I16>(val).expect("error parsing").0)
+            }
+            Int32 => {
+                ValueOwned::Int32(serde_json::from_value::<I32>(val).expect("error parsing").0)
+            }
+            Int64 => {
+                ValueOwned::Int64(serde_json::from_value::<I64>(val).expect("error parsing").0)
+            }
+            Int128 => ValueOwned::Int128(
+                serde_json::from_value::<I128>(val)
+                    .expect("error parsing")
+                    .0,
+            ),
+            Int256 => ValueOwned::Int256(
+                serde_json::from_value::<BigInt>(val)
+                    .expect("error parsing")
+                    .0,
+            ),
             Word8 => ValueOwned::Word8(
                 serde_json::from_value::<U8>(val)
                     .map(|n| n.0)
                     .map(Wrapping)
-                    .unwrap(),
+                    .expect("error parsing"),
             ),
             Word16 => ValueOwned::Word16(
                 serde_json::from_value::<U16>(val)
                     .map(|n| n.0)
                     .map(Wrapping)
-                    .unwrap(),
+                    .expect("error parsing"),
             ),
             Word32 => ValueOwned::Word32(
                 serde_json::from_value::<U32>(val)
                     .map(|n| n.0)
                     .map(Wrapping)
-                    .unwrap(),
+                    .expect("error parsing"),
             ),
             Word64 => ValueOwned::Word64(
                 serde_json::from_value::<U64>(val)
                     .map(|n| n.0)
                     .map(Wrapping)
-                    .unwrap(),
+                    .expect("error parsing"),
             ),
-            UFix64 => ValueOwned::UFix64(serde_json::from_value(val).unwrap()),
-            Fix64 => ValueOwned::Fix64(serde_json::from_value(val).unwrap()),
-            Array => ValueOwned::Array(serde_json::from_value(val).unwrap()),
-            Dictionary => ValueOwned::Dictionary(serde_json::from_value(val).unwrap()),
-            Struct => ValueOwned::Struct(serde_json::from_value(val).unwrap()),
-            Resource => ValueOwned::Resource(serde_json::from_value(val).unwrap()),
-            Event => ValueOwned::Event(serde_json::from_value(val).unwrap()),
-            Contract => ValueOwned::Contract(serde_json::from_value(val).unwrap()),
-            Enum => ValueOwned::Enum(serde_json::from_value(val).unwrap()),
-            Path => ValueOwned::Path(serde_json::from_value(val).unwrap()),
-            Type => ValueOwned::Type(serde_json::from_value::<TypeDe>(val).unwrap().static_type),
-            Capability => ValueOwned::Capability(serde_json::from_value(val).unwrap()),
+            UFix64 => ValueOwned::UFix64(serde_json::from_value(val).expect("error parsing")),
+            Fix64 => ValueOwned::Fix64(serde_json::from_value(val).expect("error parsing")),
+            Array => ValueOwned::Array(serde_json::from_value(val).expect("error parsing")),
+            Dictionary => {
+                ValueOwned::Dictionary(serde_json::from_value(val).expect("error parsing"))
+            }
+            Struct => ValueOwned::Struct(serde_json::from_value(val).expect("error parsing")),
+            Resource => ValueOwned::Resource(serde_json::from_value(val).expect("error parsing")),
+            Event => ValueOwned::Event(serde_json::from_value(val).expect("error parsing")),
+            Contract => ValueOwned::Contract(serde_json::from_value(val).expect("error parsing")),
+            Enum => ValueOwned::Enum(serde_json::from_value(val).expect("error parsing")),
+            Path => ValueOwned::Path(serde_json::from_value(val).expect("error parsing")),
+            Type => ValueOwned::Type(
+                serde_json::from_value::<TypeDe>(val)
+                    .expect("error parsing")
+                    .static_type,
+            ),
+            Capability => {
+                ValueOwned::Capability(serde_json::from_value(val).expect("error parsing"))
+            }
         })
     }
 }
