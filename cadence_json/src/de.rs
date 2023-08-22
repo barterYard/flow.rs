@@ -82,25 +82,31 @@ impl<'de> Visitor<'de> for CadenceObjectVisitor {
     {
         use crate::Type::*;
 
-        let mut ty: super::Type = super::Type::Void;
-        let mut val: serde_json::Value = json!({});
-        while let Ok(Some(k)) = map.next_key::<std::string::String>() {
-            if k == "type" {
-                ty = map.next_value()?;
-                if ty == super::Type::Void {
-                    return Ok(ValueOwned::Void);
-                }
-            } else {
-                val = map.next_value()?;
-            }
+        // while let Ok(Some(k)) = map.next_key::<std::string::String>() {
+        //     if k == "type" {
+        //         ty = map.next_value()?;
+        //         if ty == super::Type::Void {
+        //             return Ok(ValueOwned::Void);
+        //         }
+        //     } else {
+        //         val = map.next_value()?;
+        //     }
+        // }
+        map.next_key_seed(ExpectedStr("type"))?
+            .ok_or_else(|| A::Error::custom("expected type entry"))?;
+        let ty: super::Type = map.next_value()?;
+        if ty == super::Type::Void {
+            return Ok(ValueOwned::Void);
         }
+        map.next_key_seed(ExpectedStr("value"))?
+            .ok_or_else(|| A::Error::custom("expected value entry"))?;
 
         Ok(match ty {
             Void => ValueOwned::Void,
-            Optional => ValueOwned::Optional(serde_json::from_value(val).expect("error parsing")),
-            Bool => ValueOwned::Bool(serde_json::from_value(val).expect("error parsing")),
-            String => ValueOwned::String(serde_json::from_value(val).expect("error parsing")),
-            Address => ValueOwned::Address(serde_json::from_value(val).expect("error parsing")),
+            Optional => ValueOwned::Optional(map.next_value()?),
+            Bool => ValueOwned::Bool(map.next_value()?),
+            String => ValueOwned::String(map.next_value()?),
+            Address => ValueOwned::Address(map.next_value()?),
             UInt => ValueOwned::UInt(
                 serde_json::from_value::<BigUint>(val)
                     .expect("error parsing")
@@ -175,26 +181,22 @@ impl<'de> Visitor<'de> for CadenceObjectVisitor {
                     .map(Wrapping)
                     .expect("error parsing"),
             ),
-            UFix64 => ValueOwned::UFix64(serde_json::from_value(val).expect("error parsing")),
-            Fix64 => ValueOwned::Fix64(serde_json::from_value(val).expect("error parsing")),
-            Array => ValueOwned::Array(serde_json::from_value(val).expect("error parsing")),
-            Dictionary => {
-                ValueOwned::Dictionary(serde_json::from_value(val).expect("error parsing"))
-            }
-            Struct => ValueOwned::Struct(serde_json::from_value(val).expect("error parsing")),
-            Resource => ValueOwned::Resource(serde_json::from_value(val).expect("error parsing")),
-            Event => ValueOwned::Event(serde_json::from_value(val).expect("error parsing")),
-            Contract => ValueOwned::Contract(serde_json::from_value(val).expect("error parsing")),
-            Enum => ValueOwned::Enum(serde_json::from_value(val).expect("error parsing")),
-            Path => ValueOwned::Path(serde_json::from_value(val).expect("error parsing")),
+            UFix64 => ValueOwned::UFix64(map.next_value()?),
+            Fix64 => ValueOwned::Fix64(map.next_value()?),
+            Array => ValueOwned::Array(map.next_value()?),
+            Dictionary => ValueOwned::Dictionary(map.next_value()?),
+            Struct => ValueOwned::Struct(map.next_value()?),
+            Resource => ValueOwned::Resource(map.next_value()?),
+            Event => ValueOwned::Event(map.next_value()?),
+            Contract => ValueOwned::Contract(map.next_value()?),
+            Enum => ValueOwned::Enum(map.next_value()?),
+            Path => ValueOwned::Path(map.next_value()?),
             Type => ValueOwned::Type(
                 serde_json::from_value::<TypeDe>(val)
                     .expect("error parsing")
                     .static_type,
             ),
-            Capability => {
-                ValueOwned::Capability(serde_json::from_value(val).expect("error parsing"))
-            }
+            Capability => ValueOwned::Capability(map.next_value()?),
         })
     }
 }
